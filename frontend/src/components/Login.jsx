@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaEnvelope, FaLock, FaGoogle, FaFacebook, FaShieldAlt, FaTruck, FaHeadset, FaCreditCard } from 'react-icons/fa';
+import { FaUser, FaLock, FaGoogle, FaFacebook, FaShieldAlt, FaTruck, FaHeadset, FaCreditCard } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
+import { authService } from '../services/authService';
 import '../styles/Auth.css';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: ''
   });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -21,13 +25,23 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     try {
-      // TODO: Implement login logic here
-      console.log('Login data:', formData);
-      navigate('/'); // Redirect to home page after successful login
-    } catch (err) {
-      setError('Email hoặc mật khẩu không chính xác');
+      const success = await authService.login(formData.username, formData.password);
+      
+      if (success) {
+        const userData = await authService.getCurrentUser();
+        login(userData);
+        navigate('/');
+      } else {
+        setError('Tên đăng nhập hoặc mật khẩu không chính xác');
+      }
+    } catch (error) {
+      console.error('Login error:', error.response?.data || error.message);
+      setError(error.response?.data || 'Có lỗi xảy ra. Vui lòng thử lại.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -66,19 +80,19 @@ const Login = () => {
 
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="username">Tên đăng nhập</label>
               <div style={{ position: 'relative' }}>
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={formData.username}
                   onChange={handleChange}
-                  placeholder="Nhập email của bạn"
+                  placeholder="Nhập tên đăng nhập"
                   required
                 />
                 <div className="icon-wrapper">
-                  <FaEnvelope />
+                  <FaUser />
                 </div>
               </div>
             </div>
@@ -92,7 +106,7 @@ const Login = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Nhập mật khẩu của bạn"
+                  placeholder="Nhập mật khẩu"
                   required
                 />
                 <div className="icon-wrapper">
@@ -103,7 +117,7 @@ const Login = () => {
 
             {error && <div className="error-message">{error}</div>}
 
-            <button type="submit" className="auth-button">
+            <button type="submit" className="auth-button" disabled={isLoading}>
               Đăng Nhập
             </button>
           </form>

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaUser, FaEnvelope, FaLock, FaGoogle, FaFacebook, FaShieldAlt, FaTruck, FaHeadset, FaCreditCard, FaPhone } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaLock, FaGoogle, FaFacebook, FaShieldAlt, FaTruck, FaHeadset, FaCreditCard, FaPhone, FaUserTag } from 'react-icons/fa';
+import { authService } from '../services/authService';
 import '../styles/Auth.css';
 
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    username: '',
     fullName: '',
     email: '',
     phone: '',
@@ -32,9 +34,21 @@ const Register = () => {
 
     try {
       // TODO: Implement register logic here
-      console.log('Register data:', formData);
-      navigate('/'); // Redirect to home page after successful registration
-    } catch (err) {
+      const registerData = {
+        username: formData.username,
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+      };
+      console.log('Register data:', registerData);
+      const success = await authService.register(registerData);
+      if (success) {
+        navigate('/');
+      } else {
+        setError('Đã có lỗi xảy ra khi đăng ký');
+      }
+    } catch {
       setError('Đã có lỗi xảy ra khi đăng ký');
     }
   };
@@ -73,6 +87,24 @@ const Register = () => {
           </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="username">Tên đăng nhập</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Nhập tên đăng nhập"
+                  required
+                />
+                <div className="icon-wrapper">
+                  <FaUserTag />
+                </div>
+              </div>
+            </div>
+
             <div className="form-group">
               <label htmlFor="fullName">Họ và tên</label>
               <div style={{ position: 'relative' }}>

@@ -1,43 +1,43 @@
-import React, { useState } from 'react';
-import { FaStar, FaShoppingCart, FaBolt, FaMinus, FaPlus } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { FaShoppingCart, FaBolt, FaMinus, FaPlus } from 'react-icons/fa';
+import { API_ENDPOINTS } from '../config/api';
+import api from '../services/api';
 import '../styles/ProductDetails.css';
 
 const ProductDetails = () => {
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
 
-  // Demo data - sau này sẽ lấy từ API
-  const product = {
-    id: 1,
-    name: 'Samsung Galaxy S24 Ultra',
-    price: 31990000,
-    rating: 4.8,
-    reviews: 124,
-    stock: 50,
-    description: 'Samsung Galaxy S24 Ultra là flagship cao cấp nhất của Samsung, tích hợp bút S-Pen, màn hình Dynamic AMOLED 2X 6.8 inch, chip Snapdragon 8 Gen 3, camera 200MP với khả năng zoom 100x.',
-    images: [
-      '/src/assets/img/Samsung/image_61.jpg',
-      '/src/assets/img/Samsung/image_60.jpg',
-      '/src/assets/img/Samsung/image_59.jpg',
-      '/src/assets/img/Samsung/image_58.jpg'
-    ],
-    specs: [
-      { name: 'Màn hình', value: '6.8 inch, Dynamic AMOLED 2X' },
-      { name: 'Chip', value: 'Snapdragon 8 Gen 3' },
-      { name: 'RAM', value: '12GB' },
-      { name: 'Bộ nhớ trong', value: '256GB/512GB/1TB' },
-      { name: 'Camera sau', value: 'Chính 200MP, Ultra-wide 12MP, Tele 50MP (5x), Tele 10MP (3x)' },
-      { name: 'Camera trước', value: '12MP' },
-      { name: 'Pin', value: '5000mAh, sạc nhanh 45W' }
-    ]
-  };
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await api.get(`${API_ENDPOINTS.GET_PRODUCTS}/${id}`);
+        setProduct(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError('Có lỗi xảy ra khi tải thông tin sản phẩm');
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
 
   const handleQuantityChange = (change) => {
     const newQuantity = quantity + change;
-    if (newQuantity >= 1 && newQuantity <= product.stock) {
+    if (newQuantity >= 1) {
       setQuantity(newQuantity);
     }
   };
+
+  if (loading) return <div>Đang tải...</div>;
+  if (error) return <div>{error}</div>;
+  if (!product) return <div>Không tìm thấy sản phẩm</div>;
 
   return (
     <div className="details-container">
@@ -65,17 +65,11 @@ const ProductDetails = () => {
           <h1>{product.name}</h1>
           
           <div className="details-meta">
-            <div className="details-rating">
-              <div className="details-stars">
-                {[...Array(5)].map((_, i) => (
-                  <FaStar
-                    key={i}
-                    className={i < Math.floor(product.rating) ? 'filled' : 'empty'}
-                  />
-                ))}
-                <span className="details-rating-number">{product.rating}</span>
-              </div>
-              <span className="details-review-count">{product.reviews} đánh giá</span>
+            <div className="details-brand">
+              Thương hiệu: <span>{product.brand}</span>
+            </div>
+            <div className="details-sold">
+              Đã bán: <span>{product.soldQuantity}</span>
             </div>
           </div>
 
@@ -100,12 +94,10 @@ const ProductDetails = () => {
               <span>{quantity}</span>
               <button 
                 onClick={() => handleQuantityChange(1)}
-                disabled={quantity >= product.stock}
               >
                 <FaPlus />
               </button>
             </div>
-            <span className="details-stock">{product.stock} sản phẩm có sẵn</span>
           </div>
 
           <div className="details-actions">
