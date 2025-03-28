@@ -4,7 +4,9 @@ import com.example.backend.dtos.LoginRequest;
 import com.example.backend.dtos.RegisterRequest;
 import com.example.backend.dtos.UpdatePasswordRequest;
 import com.example.backend.dtos.UpdateProfileRequest;
+import com.example.backend.entities.Cart;
 import com.example.backend.entities.User;
+import com.example.backend.repositories.CartRepository;
 import com.example.backend.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -17,10 +19,12 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, CartRepository cartRepository) {
         this.userRepository = userRepository;
+        this.cartRepository = cartRepository;
     }
 
     public String register(RegisterRequest request) {
@@ -35,8 +39,13 @@ public class AuthService {
         user.setFullName(request.getFullName());
         user.setPhone(request.getPhone());
         user.setRole(0);
+        // Lưu user vào database trước
+        user = userRepository.save(user);
 
-        userRepository.save(user);
+        // Tạo giỏ hàng cho user mới
+        Cart cart = new Cart();
+        cart.setUser(user);
+        cartRepository.save(cart);
         return "User registered successfully!";
     }
 

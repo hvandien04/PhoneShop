@@ -7,8 +7,8 @@ const Profile = () => {
   const { user, updateProfile, changePassword } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    name: user?.fullName || '',
+  const [formData, setFormData] = useState({  
+    fullName: user?.fullName || '',
     email: user?.email || '',
     phone: user?.phone || '',
     address: user?.address || ''
@@ -108,13 +108,13 @@ const Profile = () => {
             {isEditing ? (
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="fullName"
+                value={formData.fullName}
                 onChange={handleChange}
                 required
               />
             ) : (
-              <p>{formData.name}</p>
+              <p>{formData.fullName}</p>
             )}
           </div>
 

@@ -1,53 +1,40 @@
-import ProductList from '../components/ProductList';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { FaShoppingCart, FaStar, FaBolt } from 'react-icons/fa';
+import { API_ENDPOINTS } from '../config/api';
+import api from '../services/api';
+import useScrollToTop from '../hooks/useScrollToTop';
 import Banner from '../components/Banner';
 import '../styles/Home.css';
 
 const Home = () => {
-  // Dữ liệu sản phẩm mẫu
-  const products = [
-    {
-      id: 1,
-      name: 'Samsung Galaxy S24 Ultra',
-      description: 'Samsung Galaxy S24 Ultra 256GB chính hãng - Màn hình 6.8 inch, Snapdragon 8 Gen 3',
-      price: 24990000,
-      image: '/src/assets/img/Samsung/image_56.jpg',
-    },
-    {
-      id: 2,
-      name: 'Samsung Galaxy S24+',
-      description: 'Samsung Galaxy S24+ 256GB chính hãng - Màn hình 6.7 inch, Snapdragon 8 Gen 3',
-      price: 19990000,
-      image: '/src/assets/img/Samsung/image_61.jpg',
-    },
-    {
-      id: 3,
-      name: 'Samsung Galaxy S24',
-      description: 'Samsung Galaxy S24 256GB chính hãng - Màn hình 6.2 inch, Snapdragon 8 Gen 3',
-      price: 15990000,
-      image: '/src/assets/img/Samsung/image_60.jpg',
-    },
-    {
-      id: 4,
-      name: 'Samsung Galaxy S23 Ultra',
-      description: 'Samsung Galaxy S23 Ultra 256GB chính hãng - Màn hình 6.8 inch, Snapdragon 8 Gen 2',
-      price: 22990000,
-      image: '/src/assets/img/Samsung/image_59.jpg',
-    },
-    {
-      id: 5,
-      name: 'Samsung Galaxy S23+',
-      description: 'Samsung Galaxy S23+ 256GB chính hãng - Màn hình 6.6 inch, Snapdragon 8 Gen 2',
-      price: 18990000,
-      image: '/src/assets/img/Samsung/image_58.jpg',
-    },
-    {
-      id: 6,
-      name: 'Samsung Galaxy S23',
-      description: 'Samsung Galaxy S23 256GB chính hãng - Màn hình 6.1 inch, Snapdragon 8 Gen 2',
-      price: 15990000,
-      image: '/src/assets/img/Samsung/image_57.jpg',
-    },
-  ];
+  useScrollToTop();
+  
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await api.get(API_ENDPOINTS.GET_PRODUCTS);
+        // Sắp xếp sản phẩm theo lượt bán (soldQuantity) và lấy 6 sản phẩm đầu tiên
+        const topProducts = response.data
+          .sort((a, b) => b.soldQuantity - a.soldQuantity)
+          .slice(0, 6);
+        setProducts(topProducts);
+        setLoading(false);
+      } catch (err) {
+        setError('Có lỗi xảy ra khi tải sản phẩm');
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (loading) return <div>Đang tải...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="home">
@@ -56,10 +43,33 @@ const Home = () => {
         <p>Chuyên bán điện thoại chính hãng với giá tốt nhất</p>
       </div>
       <Banner />
-      <section className="featured-products">
-        <h2>Sản phẩm nổi bật</h2>
-        <ProductList products={products} />
-      </section>
+      <div className="container">
+        <section className="featured-products">
+          <h2>Sản phẩm nổi bật</h2>
+          <div className="products-grid-home">
+            {products.map(product => (
+              <div key={product.id} className="product-card">
+                <Link to={`/products/${product.id}`} className="product-link">
+                  <div className="product-image">
+                    <img src={product.images[0]} alt={product.name} />
+                  </div>
+                  <div className="product-info">
+                    <h3>{product.name}</h3>
+                    <div className="product-price">{product.price.toLocaleString()}đ</div>
+                    <div className="product-sold">Đã bán: {product.soldQuantity}</div>
+                  </div>
+                </Link>
+                <div className="card-actions">
+                  <button type="button" className="card-button buy-now">
+                    <FaBolt size={16} />
+                    Mua ngay
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   );
 };

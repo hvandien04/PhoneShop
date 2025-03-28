@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaFilter, FaSearch, FaSortAmountDown, FaStar, FaShoppingCart, FaBolt } from 'react-icons/fa';
 import { API_ENDPOINTS } from '../config/api';
 import api from '../services/api';
+import useScrollToTop from '../hooks/useScrollToTop';
 import '../styles/Products.css';
 
 const PRICE_RANGES = [
@@ -13,27 +14,34 @@ const PRICE_RANGES = [
   { id: '25000000', name: 'Trên 25 triệu' }
 ];
 
-const ProductCard = ({ product }) => (
-  <div className="product-card">
-    <Link to={`/products/${product.id}`} className="product-link">
-      <div className="product-image">
-        <img src={product.images[0]} alt={product.name} />
+
+const ProductCard = ({ product }) => {
+  useScrollToTop();
+  
+  return (
+    <div className="product-card">
+      <Link to={`/products/${product.id}`} className="product-link">
+        <div className="product-image">
+          <img src={product.images[0]} alt={product.name} />
+        </div>
+        <div className="product-info">
+          <h3>{product.name}</h3>
+          <div className="product-price">{product.price.toLocaleString()}đ</div>
+        </div>
+      </Link>
+      <div className="card-actions">
+        <button type="button" className="card-button buy-now">
+          <FaBolt size={16} />
+          Mua ngay
+        </button>
       </div>
-      <div className="product-info">
-        <h3>{product.name}</h3>
-        <div className="product-price">{product.price.toLocaleString()}đ</div>
-      </div>
-    </Link>
-    <div className="card-actions">
-      <button type="button" className="card-button buy-now">
-        <FaBolt size={16} />
-        Mua ngay
-      </button>
     </div>
-  </div>
-);
+  );
+};
 
 const Products = () => {
+  useScrollToTop();
+  
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);

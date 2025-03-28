@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { FaShoppingCart, FaBolt, FaMinus, FaPlus } from 'react-icons/fa';
 import { API_ENDPOINTS } from '../config/api';
 import api from '../services/api';
+import useScrollToTop from '../hooks/useScrollToTop';
 import '../styles/ProductDetails.css';
 
 const ProductDetails = () => {
@@ -13,13 +14,15 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
 
+  useScrollToTop();
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await api.get(`${API_ENDPOINTS.GET_PRODUCTS}/${id}`);
         setProduct(response.data);
         setLoading(false);
-      } catch (err) {
+      } catch (error) {
         setError('Có lỗi xảy ra khi tải thông tin sản phẩm');
         setLoading(false);
       }

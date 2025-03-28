@@ -18,8 +18,9 @@ export const API_ENDPOINTS = {
     GET_PRODUCT_DETAIL: '/api/products/:id',
     
     // Cart endpoints
-    GET_CART: '/api/cart',
-    ADD_TO_CART: '/api/cart/add',
-    UPDATE_CART: '/api/cart/update',
-    REMOVE_FROM_CART: '/api/cart/remove',
+    // GET_CART: '/api/cart',
+    // ADD_TO_CART: '/api/cart/add',
+    // UPDATE_CART: '/api/cart/update',
+    // REMOVE_FROM_CART: '/api/cart/remove',
+    // CLEAR_CART: '/api/cart/clear'
 }; 

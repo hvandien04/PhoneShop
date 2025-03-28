@@ -68,15 +68,6 @@ const Navbar = () => {
               <span>Sản Phẩm</span>
             </Link>
           </li>
-          <li>
-            <Link 
-              to="/cart" 
-              className={`nav-item ${location.pathname === '/cart' ? 'active' : ''}`}
-            >
-              <FaShoppingCart />
-              <span>Giỏ Hàng</span>
-            </Link>
-          </li>
           {user ? (
             <li className="user-menu-container" ref={userMenuRef}>
               <button 
@@ -91,6 +82,10 @@ const Navbar = () => {
                   <Link to="/profile" className="user-menu-item" onClick={() => setShowUserMenu(false)}>
                     <FaUser />
                     <span>Thông tin tài khoản</span>
+                  </Link>
+                  <Link to="/cart" className="user-menu-item" onClick={() => setShowUserMenu(false)}>
+                    <FaShoppingCart />
+                    <span>Giỏ hàng</span>
                   </Link>
                   <Link to="/login" onClick={handleLogout} className="user-menu-item">
                     <FaSignOutAlt />
