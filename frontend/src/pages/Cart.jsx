@@ -1,123 +1,189 @@
 import React, { useState } from 'react';
-import { FaMinus, FaPlus, FaTrash } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
+import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import '../styles/Cart.css';
 
 const Cart = () => {
-  // Demo data - sau này sẽ lấy từ global state/API
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: 'Samsung Galaxy S24 Ultra',
-      price: 31990000,
-      image: '/src/assets/img/Samsung/image_61.jpg',
-      quantity: 1
-    },
-    {
-      id: 2,
-      name: 'Samsung Galaxy S24+',
-      price: 24990000,
-      image: '/src/assets/img/Samsung/image_60.jpg',
-      quantity: 1
+  const { cartItems, removeFromCart, updateCartItemQuantity } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  // Xử lý chọn/bỏ chọn sản phẩm
+  const handleSelectItem = (itemId) => {
+    setSelectedItems(prev => {
+      if (prev.includes(itemId)) {
+        return prev.filter(id => id !== itemId);
+      } else {
+        return [...prev, itemId];
+      }
+    });
+  };
+
+  // Xử lý chọn/bỏ chọn tất cả
+  const handleSelectAll = () => {
+    if (selectedItems.length === cartItems.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(cartItems.map(item => item.id));
     }
-  ]);
+  };
 
-  const handleQuantityChange = (id, change) => {
-    setCartItems(items =>
-      items.map(item => {
-        if (item.id === id) {
-          const newQuantity = item.quantity + change;
-          if (newQuantity >= 1) {
-            return { ...item, quantity: newQuantity };
-          }
-        }
-        return item;
-      })
+  // Tính tổng giá trị giỏ hàng cho các sản phẩm được chọn
+  const total = cartItems.reduce((sum, item) => {
+    if (selectedItems.includes(item.id)) {
+      return sum + (item.price * item.quantity);
+    }
+    return sum;
+  }, 0);
+
+  // Xử lý thay đổi số lượng
+  const handleQuantityChange = async (cartItemId, change) => {
+    if (isUpdating) return;
+    
+    try {
+      setIsUpdating(true);
+      const cartItem = cartItems.find(item => item.id === cartItemId);
+      if (!cartItem) return;
+
+      const newQuantity = cartItem.quantity + change;
+      if (newQuantity >= 1) {
+        await updateCartItemQuantity(cartItemId, change);
+      }
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Xử lý xóa sản phẩm
+  const handleRemove = async (cartItemId) => {
+    try {
+      await removeFromCart(cartItemId);
+      // Xóa khỏi danh sách đã chọn nếu có
+      setSelectedItems(prev => prev.filter(id => id !== cartItemId));
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  // Xử lý thanh toán
+  const handleCheckout = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    if (selectedItems.length === 0) {
+      alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán!');
+      return;
+    }
+    // TODO: Implement checkout logic
+    alert('Chức năng thanh toán đang được phát triển!');
+  };
+
+  if (!user) {
+    return (
+      <div className="cart-empty">
+        <h2>Vui lòng đăng nhập để xem giỏ hàng</h2>
+        <button onClick={() => navigate('/login')}>Đăng nhập</button>
+      </div>
     );
-  };
-
-  const handleRemoveItem = (id) => {
-    setCartItems(items => items.filter(item => item.id !== id));
-  };
-
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  };
+  }
 
   if (cartItems.length === 0) {
     return (
-      <div className="cart-container">
-        <div className="cart-empty">
-          <h2>Giỏ hàng trống</h2>
-          <p>Bạn chưa thêm sản phẩm nào vào giỏ hàng.</p>
-        </div>
+      <div className="cart-empty">
+        <h2>Giỏ hàng trống</h2>
+        <button onClick={() => navigate('/products')}>Tiếp tục mua sắm</button>
       </div>
     );
   }
 
   return (
     <div className="cart-container">
+      <h1>Giỏ hàng của bạn</h1>
+      
       <div className="cart-content">
         <div className="cart-items">
-          <h2>Giỏ hàng của bạn</h2>
-          
-          {cartItems.map(item => (
+          <div className="cart-items-header">
+            <label className="select-all">
+              <input
+                type="checkbox"
+                checked={selectedItems.length === cartItems.length}
+                onChange={handleSelectAll}
+              />
+              Chọn tất cả
+            </label>
+          </div>
+          {cartItems.map((item) => (
             <div key={item.id} className="cart-item">
-              <div className="item-image">
-                <img src={item.image} alt={item.name} />
+              <div className="cart-item-select">
+                <input
+                  type="checkbox"
+                  checked={selectedItems.includes(item.id)}
+                  onChange={() => handleSelectItem(item.id)}
+                />
+              </div>
+              <div className="cart-item-image-placeholder">
+                <img src={item.imageUrl} alt={item.productName} />
               </div>
               
-              <div className="item-details">
-                <h3>{item.name}</h3>
-                <div className="item-price">{item.price.toLocaleString()}đ</div>
+              <div className="cart-item-info">
+                <h3>{item.productName}</h3>
+                <p className="cart-item-price">{item.price?.toLocaleString()}đ</p>
                 
-                <div className="item-actions">
-                  <div className="quantity-controls">
-                    <button 
-                      onClick={() => handleQuantityChange(item.id, -1)}
-                      disabled={item.quantity <= 1}
-                    >
-                      <FaMinus />
-                    </button>
-                    <span>{item.quantity}</span>
-                    <button 
-                      onClick={() => handleQuantityChange(item.id, 1)}
-                    >
-                      <FaPlus />
-                    </button>
-                  </div>
-                  
+                <div className="cart-item-quantity">
                   <button 
-                    className="remove-button"
-                    onClick={() => handleRemoveItem(item.id)}
+                    onClick={() => handleQuantityChange(item.id, -1)}
+                    disabled={item.quantity <= 1 || isUpdating}
                   >
-                    <FaTrash />
+                    -
+                  </button>
+                  <span>{item.quantity}</span>
+                  <button 
+                    onClick={() => handleQuantityChange(item.id, 1)}
+                    disabled={isUpdating}
+                  >
+                    +
                   </button>
                 </div>
               </div>
-              
-              <div className="item-total">
-                {(item.price * item.quantity).toLocaleString()}đ
-              </div>
+
+              <button 
+                className="cart-item-remove"
+                onClick={() => handleRemove(item.id)}
+                disabled={isUpdating}
+              >
+              <FaTrash />
+              </button>
             </div>
           ))}
         </div>
 
         <div className="cart-summary">
-          <h3>Tổng tiền</h3>
-          <div className="summary-row">
+          <h2>Tổng đơn hàng</h2>
+          <div className="cart-summary-item">
             <span>Tạm tính:</span>
-            <span>{calculateTotal().toLocaleString()}đ</span>
+            <span>{total.toLocaleString()}đ</span>
           </div>
-          <div className="summary-row">
+          <div className="cart-summary-item">
             <span>Phí vận chuyển:</span>
             <span>Miễn phí</span>
           </div>
-          <div className="summary-total">
+          <div className="cart-summary-total">
             <span>Tổng cộng:</span>
-            <span>{calculateTotal().toLocaleString()}đ</span>
+            <span>{total.toLocaleString()}đ</span>
           </div>
-          <button className="checkout-button">
-            Tiến hành thanh toán
+          <button 
+            className="checkout-button"
+            onClick={handleCheckout}
+            disabled={isUpdating || selectedItems.length === 0}
+          >
+            Tiến hành thanh toán ({selectedItems.length} sản phẩm)
           </button>
         </div>
       </div>

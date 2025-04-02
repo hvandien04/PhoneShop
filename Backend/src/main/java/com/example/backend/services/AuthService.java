@@ -57,6 +57,7 @@ public class AuthService {
             if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 HttpSession session = httpRequest.getSession();
                 session.setAttribute("user", user);
+                session.setAttribute("UserId", user.getId());
                 return "Login successful!";
             }
         }

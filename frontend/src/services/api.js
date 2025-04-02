@@ -10,26 +10,31 @@ const api = axios.create({
     withCredentials: true // Cho phép gửi cookie trong mọi request
 });
 
+// Add request interceptor
+api.interceptors.request.use(
+    (config) => {
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 // Add response interceptor
 api.interceptors.response.use(
     (response) => {
-        console.log('API Response:', response); // Debug log
+        
         return response;
     },
     (error) => {
-        console.error('API Error:', error.response || error); // Debug log
+        
         if (error.response) {
             // Handle different error status codes
             switch (error.response.status) {
                 case 401:
-                    // Handle unauthorized
-                    localStorage.removeItem('token');
+                    // Handle unauthorized - redirect to login
                     window.location.href = '/login';
                     break;
-                // case 403:
-                //     // Handle forbidden
-                //     window.location.href = '/forbidden';
-                //     break;
                 case 404:
                     // Handle not found
                     window.location.href = '/not-found';

@@ -5,6 +5,7 @@ import { API_ENDPOINTS } from '../config/api';
 import api from '../services/api';
 import useScrollToTop from '../hooks/useScrollToTop';
 import '../styles/ProductDetails.css';
+import { useCart } from '../context/CartContext';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -13,6 +14,7 @@ const ProductDetails = () => {
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const { addToCart } = useCart();
 
   useScrollToTop();
 
@@ -23,6 +25,7 @@ const ProductDetails = () => {
         setProduct(response.data);
         setLoading(false);
       } catch (error) {
+        console.error('Error fetching product:', error);
         setError('Có lỗi xảy ra khi tải thông tin sản phẩm');
         setLoading(false);
       }
@@ -35,6 +38,31 @@ const ProductDetails = () => {
     const newQuantity = quantity + change;
     if (newQuantity >= 1) {
       setQuantity(newQuantity);
+    }
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      if (!product || !product.id) {
+        throw new Error('Dữ liệu sản phẩm không hợp lệ');
+      }
+
+      console.log('Adding to cart:', {
+        productId: product.id,
+        quantity: quantity
+      });
+
+      await addToCart(product, quantity);
+      alert('Thêm vào giỏ hàng thành công!');
+    } catch (error) {
+      console.error('Error in handleAddToCart:', error);
+      if (error.response) {
+        alert(error.response.data || 'Có lỗi xảy ra khi thêm vào giỏ hàng');
+      } else if (error.request) {
+        alert('Không thể kết nối đến server. Vui lòng thử lại sau.');
+      } else {
+        alert(error.message || 'Có lỗi xảy ra khi thêm vào giỏ hàng');
+      }
     }
   };
 
@@ -104,7 +132,7 @@ const ProductDetails = () => {
           </div>
 
           <div className="details-actions">
-            <button className="details-button cart">
+            <button className="details-button cart" onClick={handleAddToCart}>
               <FaShoppingCart />
               Thêm vào giỏ hàng
             </button>

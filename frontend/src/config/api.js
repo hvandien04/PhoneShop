@@ -9,18 +9,13 @@ export const API_ENDPOINTS = {
     UPDATE_PASSWORD: '/api/auth/update-password',
     UPDATE_PROFILE: '/api/auth/update-profile',
     
-    // // User endpoints
-    // GET_USER_PROFILE: '/api/user/profile',
-    // UPDATE_USER_PROFILE: '/api/user/profile',
-    
     // Product endpoints
     GET_PRODUCTS: '/api/products',
     GET_PRODUCT_DETAIL: '/api/products/:id',
     
     // Cart endpoints
-    // GET_CART: '/api/cart',
-    // ADD_TO_CART: '/api/cart/add',
-    // UPDATE_CART: '/api/cart/update',
-    // REMOVE_FROM_CART: '/api/cart/remove',
-    // CLEAR_CART: '/api/cart/clear'
+    GET_CART: '/api/cart/get',
+    ADD_TO_CART: '/api/cart/add',
+    REMOVE_FROM_CART: '/api/cart/remove',
+    UPDATE_CART_ITEM_QUANTITY: '/api/cart/update',
 }; 

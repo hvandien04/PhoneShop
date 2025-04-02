@@ -18,7 +18,7 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ProductDTO getProductById(long id) {
+    public ProductDTO getProductById(int id) {
         Optional<Product> product = productRepository.findById(id);
 
         if (product.isPresent()) {
