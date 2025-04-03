@@ -1,0 +1,374 @@
+.orders-container {
+  min-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.orders-empty {
+  text-align: center;
+  font-size: 18px;
+  color: #777;
+}
+
+.orders-empty button {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.orders-empty button:hover {
+  background-color: #27ae60;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.order-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  border-left: 5px solid #2ecc71;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.order-info h3 {
+  font-size: 18px;
+  margin: 0;
+  color: #333;
+}
+
+.order-date {
+  font-size: 14px;
+  color: #888;
+}
+
+.order-status {
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 15px;
+}
+
+.status-pending { background-color: #f1c40f; color: white; }  /* Vàng */
+.status-confirmed { background-color: #2ecc71; color: white; } /* Xanh lá */
+.status-shipping { background-color: #3498db; color: white; }  /* Xanh biển */
+.status-delivered { background-color: #27ae60; color: white; } /* Xanh đậm */
+.status-cancelled { background-color: #e74c3c; color: white; }  /* Đỏ */
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.order-item-image img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.order-item-info h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.order-item-price {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.order-item-quantity {
+  font-size: 13px;
+  color: #666;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.order-total {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.order-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.view-details-button,
+.cancel-order-button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.view-details-button {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.view-details-button:hover {
+  background-color: #27ae60;
+}
+
+.cancel-order-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.cancel-order-button:hover {
+  background-color: #c0392b;
+}
+
+.loading, .error {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 4px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.54);
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.order-detail-section {
+  margin-bottom: 1.5rem;
+}
+
+.order-detail-section h3 {
+  font-size: 1rem;
+  color: rgba(0, 0, 0, 0.87);
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 0.875rem;
+}
+
+.detail-value {
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 0.875rem;
+}
+
+.detail-item {
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-item-image {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  border-radius: 2px;
+}
+
+.detail-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.detail-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-item-info h4 {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.87);
+  margin-bottom: 0.25rem;
+}
+
+.detail-item-variant {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.54);
+  margin-bottom: 0.25rem;
+}
+
+.detail-item-price {
+  color: #ee4d2d;
+  font-size: 0.875rem;
+}
+
+.total {
+  font-weight: 500;
+}
+
+.total-amount {
+  color: #ee4d2d;
+  font-size: 1.25rem;
+}
+
+.status-paid {
+  color: #52c41a;
+  font-weight: 500;
+}
+
+.status-unpaid {
+  color: #f5222d;
+  font-weight: 500;
+}
+
+.payment-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.payment-methods {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.payment-method-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  border-radius: 2px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.payment-method-button:hover {
+  border-color: #ee4d2d;
+  color: #ee4d2d;
+}
+
+.payment-method-button img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.payment-method-button span {
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .payment-methods {
+    flex-direction: column;
+  }
+}

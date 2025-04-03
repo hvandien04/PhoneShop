@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaSearch, FaShoppingCart, FaUser, FaHome, FaMobileAlt, FaSignOutAlt, FaUserCircle } from 'react-icons/fa';
+import { FaSearch, FaShoppingCart, FaUser, FaHome, FaMobileAlt, FaSignOutAlt, FaUserCircle, FaClipboardList} from 'react-icons/fa';
 import '../styles/Navbar.css';
 import useScrollPosition from '../hooks/useScrollPosition';
 import { useAuth } from '../context/AuthContext';
@@ -86,6 +86,10 @@ const Navbar = () => {
                   <Link to="/cart" className="user-menu-item" onClick={() => setShowUserMenu(false)}>
                     <FaShoppingCart />
                     <span>Giỏ hàng</span>
+                  </Link>
+                  <Link to="/order" className="user-menu-item" onClick={() => setShowUserMenu(false)}>
+                    <FaClipboardList />
+                    <span>Đơn hàng</span>
                   </Link>
                   <Link to="/login" onClick={handleLogout} className="user-menu-item">
                     <FaSignOutAlt />

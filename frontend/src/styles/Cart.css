@@ -1,8 +1,7 @@
 .cart-container {
   max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  padding-top: 80px;
+  /* margin: 2rem auto; */
+  padding: 2rem;
 }
 
 .cart-container h1 {

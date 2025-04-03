@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaEnvelope, FaLock, FaGoogle, FaFacebook, FaShieldAlt, FaTruck, FaHeadset, FaCreditCard, FaPhone, FaUserTag } from 'react-icons/fa';
 import { authService } from '../services/authService';
+import { toast } from 'react-toastify';
 import '../styles/Auth.css';
 
 const Register = () => {
@@ -44,7 +45,16 @@ const Register = () => {
       console.log('Register data:', registerData);
       const success = await authService.register(registerData);
       if (success) {
-        navigate('/');
+        toast.success('Đăng ký thành công!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        navigate('/login');
       } else {
         setError('Đã có lỗi xảy ra khi đăng ký');
       }

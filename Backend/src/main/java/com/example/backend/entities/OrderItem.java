@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 public class OrderItem {
     @Id
     @Column(name = "order_item_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
+import { toast } from 'react-toastify'; 
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+
 import '../styles/Cart.css';
 
 const Cart = () => {
-  const { cartItems, removeFromCart, updateCartItemQuantity } = useCart();
+  const { cartItems, removeFromCart, updateCartItemQuantity, Checkout } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-
+  
   // Xử lý chọn/bỏ chọn sản phẩm
   const handleSelectItem = (itemId) => {
     setSelectedItems(prev => {
@@ -50,6 +52,7 @@ const Cart = () => {
       if (!cartItem) return;
 
       const newQuantity = cartItem.quantity + change;
+      console.log(cartItemId, change);
       if (newQuantity >= 1) {
         await updateCartItemQuantity(cartItemId, change);
       }
@@ -72,18 +75,48 @@ const Cart = () => {
   };
 
   // Xử lý thanh toán
-  const handleCheckout = () => {
-    if (!user) {
-      navigate('/login');
-      return;
+  const handleCheckout = async () => {
+    try {
+      if (selectedItems.length === 0) {
+        alert('Vui lòng chọn sản phẩm để đặt hàng!');
+        return;
+      }
+  
+      // Chuyển đổi các sản phẩm được chọn thành dữ liệu để gửi lên server
+      const orderData = cartItems
+        .filter(item => selectedItems.includes(item.id))
+        .map(item => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          price: item.price,
+          name: item.productName,
+          imageUrl: item.imageUrl,
+        }));
+  
+      // Gửi yêu cầu tạo đơn hàng
+      const response = await Checkout(orderData);
+  
+      if (response && response.status === 200) {
+        toast.success('Đặt hàng thành công!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        navigate('/order');
+      } else {
+        console.error('Lỗi khi tạo đơn hàng:', response.statusText);
+        alert('Có lỗi xảy ra khi tạo đơn hàng.');
+      }
+      
+    } catch (error) {
+      console.error('Lỗi khi đặt hàng:', error);
     }
-    if (selectedItems.length === 0) {
-      alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán!');
-      return;
-    }
-    // TODO: Implement checkout logic
-    alert('Chức năng thanh toán đang được phát triển!');
   };
+
 
   if (!user) {
     return (
@@ -183,7 +216,7 @@ const Cart = () => {
             onClick={handleCheckout}
             disabled={isUpdating || selectedItems.length === 0}
           >
-            Tiến hành thanh toán ({selectedItems.length} sản phẩm)
+            Đăt Hàng ({selectedItems.length} sản phẩm)
           </button>
         </div>
       </div>

@@ -93,6 +93,17 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  const Checkout = async (orderData) => {
+    try {
+      const response = await api.post(API_ENDPOINTS.CREATE_ORDER,orderData);
+      return response;
+    } catch (error) {
+      console.error('Error in Checkout:', error.response ? error.response.data : error.message);
+      throw error;
+    }
+  };
+
+
   const updateCartItemQuantity = async (cartItemId, newQuantity) => {
     try {
       if (!user) {
@@ -134,12 +145,14 @@ export const CartProvider = ({ children }) => {
     return <div>Loading...</div>;
   }
 
+
   return (
     <CartContext.Provider value={{
       cartItems,
       addToCart,
       removeFromCart,
       updateCartItemQuantity,
+      Checkout,
     }}>
       {children}
     </CartContext.Provider>

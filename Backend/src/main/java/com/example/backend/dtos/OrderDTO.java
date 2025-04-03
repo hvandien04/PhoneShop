@@ -1,48 +1,18 @@
-package com.example.backend.entities;
-
-import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+package com.example.backend.dtos;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
-@Entity
-@Table(name = "orders")
-public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id", nullable = false)
+public class OrderDTO {
     private Integer id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "user_id")
-    private com.example.backend.entities.User user;
-
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "order_date")
+    private Integer userId;
     private Instant orderDate;
-
-    @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
-
-    @ColumnDefault("'Pending'")
-    @Lob
-    @Column(name = "status")
     private String status;
-
-    @ColumnDefault("'Unpaid")
-    @Lob
-    @Column(name = "payment_status")
     private String paymentStatus;
-
-    @ColumnDefault("'Processing")
-    @Lob
-    @Column(name = "shipping_status")
     private String shippingStatus;
-
+    private List<OrderItemDTO> items;
 
     public Integer getId() {
         return id;
@@ -52,12 +22,12 @@ public class Order {
         this.id = id;
     }
 
-    public com.example.backend.entities.User getUser() {
-        return user;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUser(com.example.backend.entities.User user) {
-        this.user = user;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public Instant getOrderDate() {
@@ -100,4 +70,11 @@ public class Order {
         this.shippingStatus = shippingStatus;
     }
 
+    public List<OrderItemDTO> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItemDTO> items) {
+        this.items = items;
+    }
 }
