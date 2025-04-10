@@ -22,6 +22,9 @@ public class AuthService {
     private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    public static final Integer ROLE_ADMIN = 1;
+    public static final Integer ROLE_USER = 0;
+
     public AuthService(UserRepository userRepository, CartRepository cartRepository) {
         this.userRepository = userRepository;
         this.cartRepository = cartRepository;
@@ -117,5 +120,35 @@ public class AuthService {
         userRepository.save(user);
 
         return "Password updated successfully!";
+    }
+
+    public boolean hasRole(HttpServletRequest request, int requiredRole) {
+        User user = getCurrentUser(request);
+        return user != null && user.getRole() == requiredRole;
+    }
+
+    public boolean hasAnyRole(HttpServletRequest request, int... roles) {
+        User user = getCurrentUser(request);
+        if (user == null) return false;
+
+        for (int role : roles) {
+            if (user.getRole() == role) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public User getCurrentUser(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        return session != null ? (User) session.getAttribute("user") : null;
+    }
+
+    public boolean isAdmin(HttpServletRequest request) {
+        return hasRole(request, ROLE_ADMIN);
+    }
+
+    public boolean isRegularUser(HttpServletRequest request) {
+        return hasRole(request, ROLE_USER);
     }
 }

@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (userData) => {
+    console.log('Setting user data:', userData);
     setUser(userData);
   };
 

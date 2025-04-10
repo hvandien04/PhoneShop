@@ -33,7 +33,11 @@ const Login = () => {
       if (success) {
         const userData = await authService.getCurrentUser();
         login(userData);
-        navigate('/');
+        if (userData.role === 1) {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
       } else {
         setError('Tên đăng nhập hoặc mật khẩu không chính xác');
       }

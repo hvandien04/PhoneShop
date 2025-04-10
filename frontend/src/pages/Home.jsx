@@ -3,12 +3,10 @@ import { Link } from 'react-router-dom';
 import { FaShoppingCart, FaStar, FaBolt } from 'react-icons/fa';
 import { API_ENDPOINTS } from '../config/api';
 import api from '../services/api';
-import useScrollToTop from '../hooks/useScrollToTop';
 import Banner from '../components/Banner';
 import '../styles/Home.css';
 
 const Home = () => {
-  useScrollToTop();
   
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);

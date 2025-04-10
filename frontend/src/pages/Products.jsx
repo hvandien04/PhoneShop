@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { FaFilter, FaSearch, FaSortAmountDown, FaStar, FaShoppingCart, FaBolt } from 'react-icons/fa';
 import { API_ENDPOINTS } from '../config/api';
 import api from '../services/api';
-import useScrollToTop from '../hooks/useScrollToTop';
 import '../styles/Products.css';
 
 const PRICE_RANGES = [
@@ -16,7 +15,6 @@ const PRICE_RANGES = [
 
 
 const ProductCard = ({ product }) => {
-  useScrollToTop();
   
   return (
     <div className="product-card">
@@ -40,7 +38,6 @@ const ProductCard = ({ product }) => {
 };
 
 const Products = () => {
-  useScrollToTop();
   
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);

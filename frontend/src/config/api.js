@@ -19,4 +19,5 @@ export const API_ENDPOINTS = {
     REMOVE_FROM_CART: '/api/cart/remove',
     UPDATE_CART_ITEM_QUANTITY: '/api/cart/update',
     CREATE_ORDER: '/api/orders/create',
+
 }; 

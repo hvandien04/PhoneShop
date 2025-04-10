@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { FaShoppingCart, FaBolt, FaMinus, FaPlus } from 'react-icons/fa';
 import { API_ENDPOINTS } from '../config/api';
 import api from '../services/api';
-import useScrollToTop from '../hooks/useScrollToTop';
 import '../styles/ProductDetails.css';
 import { useCart } from '../context/CartContext';
 
@@ -15,8 +14,6 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const { addToCart } = useCart();
-
-  useScrollToTop();
 
   useEffect(() => {
     const fetchProduct = async () => {
